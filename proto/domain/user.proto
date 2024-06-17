@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package domain;
+
+option go_package = "dm/internal/domain";
+
+message CreateUserRequest {
+  string name = 1;
+}
+
+message CreateUserResponse {
+  string user_id = 1;
+}

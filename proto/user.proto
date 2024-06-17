@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package api;
+
+import "domain/user.proto";
+
+option go_package = "dm/internal/rpc";
+
+service User {
+    rpc CreateUser(domain.CreateUserRequest) returns (domain.CreateUserResponse);
+}
