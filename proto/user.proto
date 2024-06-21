@@ -8,4 +8,7 @@ option go_package = "dm/internal/rpc";
 
 service User {
     rpc CreateUser(domain.CreateUserRequest) returns (domain.CreateUserResponse);
+    rpc GetUser(domain.GetUserRequest) returns (domain.GetUserResponse);
+    rpc UpdateUser(domain.UpdateUserRequest) returns (domain.UpdateUserResponse);
+    rpc DeleteUser(domain.DeleteUserRequest) returns (domain.DeleteUserResponse);
 }
