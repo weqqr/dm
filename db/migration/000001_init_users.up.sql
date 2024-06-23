@@ -1,0 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS users AUTHORIZATION administrator;
+
+CREATE TABLE IF NOT EXISTS users.accounts (
+    id SERIAL NOT NULL UNIQUE,
+    nickname TEXT NOT NULL UNIQUE
+)

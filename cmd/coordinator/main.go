@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
+	"dm/db"
 	"dm/internal/config"
-	"dm/internal/db"
 	"dm/internal/server"
 	"dm/internal/user/usercore"
 	"dm/internal/user/userservice"
 	"dm/internal/user/userstorage"
-	"github.com/ilyakaznacheev/cleanenv"
 	"log"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 func main() {
@@ -23,6 +24,11 @@ func main() {
 	database, err := db.Connect(context.TODO(), appConfig.Database)
 	if err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
+	}
+
+	err = db.Migrate(appConfig.Database)
+	if err != nil {
+		log.Fatalf("Error migrating database: %v", err)
 	}
 
 	webServer := server.NewServer(appConfig.Server)
