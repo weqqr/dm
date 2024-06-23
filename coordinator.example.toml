@@ -2,4 +2,4 @@
 address = "[::]:80"
 
 [database]
-dsn = "postgres://postgres@localhost:5432/postgres"
+dsn = "postgresql://administrator@postgres:5432/dm?sslmode=disable"

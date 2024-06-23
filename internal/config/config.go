@@ -1,7 +1,7 @@
 package config
 
 import (
-	"dm/internal/db"
+	"dm/db"
 	"dm/internal/server"
 )
 

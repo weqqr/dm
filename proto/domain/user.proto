@@ -4,8 +4,6 @@ package domain;
 
 option go_package = "dm/internal/domain";
 
-// TODO: Update, Delete functions
-
 message User {
   string id = 1;
   string name = 2;
