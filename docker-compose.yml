@@ -5,6 +5,7 @@ services:
       dockerfile: "coordinator.dockerfile"
     ports:
       - "80:80"
+      - "81:81"
     depends_on:
       postgres:
         condition: service_healthy

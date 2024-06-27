@@ -8,6 +8,7 @@ import (
 
 	"github.com/ilyakaznacheev/cleanenv"
 
+	"dm/gateway"
 	"dm/internal/config"
 	"dm/internal/server"
 	"dm/internal/user/usercore"
@@ -35,7 +36,14 @@ func main() {
 
 	webServer.AddService(userservice.New(usercore.New(userstorage.New(database))))
 
-	if err = webServer.Run(context.Background()); err != nil {
-		log.Fatalf("Error running web server: %v", err)
+	go func() {
+		if err = webServer.Run(context.Background()); err != nil {
+			log.Fatalf("Error running web server: %v", err)
+		}
+	}()
+
+	var r gateway.Router
+	if err := r.Run(appConfig.Gateway); err != nil {
+		log.Fatalf("Error launching Gateway: %v", err)
 	}
 }
