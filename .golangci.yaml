@@ -1,0 +1,474 @@
+# Options for analysis running.
+run:
+  # Timeout for analysis, e.g. 30s, 5m.
+  # Default: 1m
+  timeout: 5m
+  # Exit code when at least one issue was found.
+  # Default: 1
+  issues-exit-code: 1
+  # Include test files or not.
+  # Default: true
+  tests: true
+  # List of build tags, all linters use it.
+  # Default: []
+  build-tags: [ ]
+  # If set, we pass it to "go list -mod={option}". From "go help modules":
+  # If invoked with -mod=readonly, the go command is disallowed from the implicit
+  # automatic updating of go.mod described above. Instead, it fails when any changes
+  # to go.mod are needed. This setting is most useful to check that go.mod does
+  # not need updates, such as in a continuous integration and testing system.
+  # If invoked with -mod=vendor, the go command assumes that the vendor
+  # directory holds the correct copies of dependencies and ignores
+  # the dependency descriptions in go.mod.
+  #
+  # Allowed values: readonly|vendor|mod
+  # Default: ""
+  modules-download-mode: readonly
+  # Allow multiple parallel golangci-lint instances running.
+  # If false, golangci-lint acquires file lock on start.
+  # Default: false
+  allow-parallel-runners: true
+  # Allow multiple golangci-lint instances running, but serialize them around a lock.
+  # If false, golangci-lint exits with an error if it fails to acquire file lock on start.
+  # Default: false
+  allow-serial-runners: true
+  # Define the Go version limit.
+  # Mainly related to generics support since go1.18.
+  # Default: use Go version from the go.mod file, fallback on the env var `GOVERSION`, fallback on 1.17
+  go: '1.22'
+
+# output configuration options
+output:
+  # The formats used to render issues.
+  # Formats:
+  # - `colored-line-number`
+  # - `line-number`
+  # - `json`
+  # - `colored-tab`
+  # - `tab`
+  # - `html`
+  # - `checkstyle`
+  # - `code-climate`
+  # - `junit-xml`
+  # - `github-actions`
+  # - `teamcity`
+  # - `sarif`
+  # Output path can be either `stdout`, `stderr` or path to the file to write to.
+  #
+  # For the CLI flag (`--out-format`), multiple formats can be specified by separating them by comma.
+  # The output can be specified for each of them by separating format name and path by colon symbol.
+  # Example: "--out-format=checkstyle:report.xml,json:stdout,colored-line-number"
+  # The CLI flag (`--out-format`) override the configuration file.
+  #
+  # Default:
+  #   formats:
+  #     - format: colored-line-number
+  #       path: stdout
+  formats:
+    - format: code-climate
+      path: code-quality-report.json
+    - format: colored-line-number
+      path: stdout
+  # Print lines of code with issue.
+  # Default: true
+  print-issued-lines: true
+  # Print linter name in the end of issue text.
+  # Default: true
+  print-linter-name: true
+  # Make issues output unique by line.
+  # Default: true
+  uniq-by-line: true
+  # Add a prefix to the output file references.
+  # Default: ""
+  path-prefix: ""
+  # Sort results by the order defined in `sort-order`.
+  # Default: false
+  sort-results: true
+  # Order to use when sorting results.
+  # Require `sort-results` to `true`.
+  # Possible values: `file`, `linter`, and `severity`.
+  #
+  # If the severity values are inside the following list, they are ordered in this order:
+  #   1. error
+  #   2. warning
+  #   3. high
+  #   4. medium
+  #   5. low
+  # Either they are sorted alphabetically.
+  #
+  # Default: ["file"]
+  sort-order:
+    - linter
+    - severity
+    - file # filepath, line, and column.
+  # Show statistics per linter.
+  # Default: false
+  show-stats: false
+
+# All available settings of specific linters.
+linters-settings:
+  funlen:
+    # Checks the number of lines in a function.
+    # If lower than 0, disable the check.
+    # Default: 60
+    lines: 60
+    # Checks the number of statements in a function.
+    # If lower than 0, disable the check.
+    # Default: 40
+    statements: 40
+    # Ignore comments when counting lines.
+    # Default false
+    ignore-comments: true
+
+  gocognit:
+    # Minimal code complexity to report.
+    # Default: 30 (but we recommend 10-20)
+    min-complexity: 15
+
+  dupl:
+    # Tokens count to trigger issue.
+    # Default: 150
+    threshold: 100
+
+  gosec:
+    # To select a subset of rules to run.
+    # Available rules: https://github.com/securego/gosec#available-rules
+    # Default: [] - means include all rules
+    includes: [ ]
+    # To specify a set of rules to explicitly exclude.
+    # Available rules: https://github.com/securego/gosec#available-rules
+    # Default: []
+    excludes: [ ]
+    # Exclude generated files
+    # Default: false
+    exclude-generated: true
+    # Filter out the issues with a lower severity than the given value.
+    # Valid options are: low, medium, high.
+    # Default: low
+    severity: medium
+    # Filter out the issues with a lower confidence than the given value.
+    # Valid options are: low, medium, high.
+    # Default: low
+    confidence: medium
+    # To specify the configuration of rules.
+    config:
+      # Globals are applicable to all rules.
+      global:
+        # If true, ignore #nosec in comments (and an alternative as well).
+        # Default: false
+        nosec: false
+        # Define whether nosec issues are counted as finding or not.
+        # Default: false
+        show-ignored: true
+        # Audit mode enables addition checks that for normal code analysis might be too nosy.
+        # Default: false
+        audit: true
+      G101:
+        # If true, complain about all cases (even with low entropy).
+        # Default: false
+        ignore_entropy: false
+        # Maximum allowed entropy of the string.
+        # Default: "80.0"
+        entropy_threshold: "80.0"
+        # Maximum allowed value of entropy/string length.
+        # Is taken into account if entropy >= entropy_threshold/2.
+        # Default: "3.0"
+        per_char_threshold: "3.0"
+        # Calculate entropy for first N chars of the string.
+        # Default: "16"
+        truncate: "32"
+      # Additional functions to ignore while checking unhandled errors.
+      # Following functions always ignored:
+      #   bytes.Buffer:
+      #     - Write
+      #     - WriteByte
+      #     - WriteRune
+      #     - WriteString
+      #   fmt:
+      #     - Print
+      #     - Printf
+      #     - Println
+      #     - Fprint
+      #     - Fprintf
+      #     - Fprintln
+      #   strings.Builder:
+      #     - Write
+      #     - WriteByte
+      #     - WriteRune
+      #     - WriteString
+      #   io.PipeWriter:
+      #     - CloseWithError
+      #   hash.Hash:
+      #     - Write
+      #   os:
+      #     - Unsetenv
+      # Default: {}
+      G104:
+        fmt:
+          - Fscanf
+      G111:
+        # Regexp pattern to find potential directory traversal.
+        # Default: "http\\.Dir\\(\"\\/\"\\)|http\\.Dir\\('\\/'\\)"
+        pattern: "custom\\.Dir\\(\\)"
+      # Maximum allowed permissions mode for os.Mkdir and os.MkdirAll
+      # Default: "0750"
+      G301: "0755"
+      # Maximum allowed permissions mode for os.OpenFile and os.Chmod
+      # Default: "0600"
+      G302: "0600"
+      # Maximum allowed permissions mode for os.WriteFile and ioutil.WriteFile
+      # Default: "0600"
+      G306: "0600"
+
+  goconst:
+    # Minimal length of string constant.
+    # Default: 3
+    min-len: 2
+    # Minimum occurrences of constant string count to trigger issue.
+    # Default: 3
+    min-occurrences: 2
+    # Ignore test files.
+    # Default: false
+    ignore-tests: true
+    # Look for existing constants matching the values.
+    # Default: true
+    match-constant: true
+    # Search also for duplicated numbers.
+    # Default: false
+    numbers: true
+    # Minimum value, only works with goconst.numbers
+    # Default: 3
+    min: 2
+    # Maximum value, only works with goconst.numbers
+    # Default: 3
+    max: 2
+    # Ignore when constant is not used as function argument.
+    # Default: true
+    ignore-calls: false
+    # Exclude strings matching the given regular expression.
+    # Default: ""
+    ignore-strings: ""
+
+  tagliatelle:
+    # Check the struct tag name case.
+    case:
+      # Use the struct field name to check the name of the struct tag.
+      # Default: false
+      use-field-name: true
+      # `camel` is used for `json` and `yaml`, and `header` is used for `header` (can be overridden)
+      # Default: {}
+      rules:
+        # Any struct tag type can be used.
+        # Support string case: `camel`, `pascal`, `kebab`, `snake`, `upperSnake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`, `header`
+        json: snake
+        yaml: camel
+        xml: camel
+        toml: snake
+        bson: camel
+        avro: snake
+        mapstructure: kebab
+        env: upperSnake
+        envconfig: upperSnake
+
+  varnamelen:
+    # The longest distance, in source lines, that is being considered a "small scope".
+    # Variables used in at most this many lines will be ignored.
+    # Default: 5
+    max-distance: 5
+    # The minimum length of a variable's name that is considered "long".
+    # Variable names that are at least this long will be ignored.
+    # Default: 3
+    min-name-length: 2
+    # Check method receivers.
+    # Default: false
+    check-receiver: false
+    # Check named return values.
+    # Default: false
+    check-return: true
+    # Check type parameters.
+    # Default: false
+    check-type-param: true
+    # Ignore "ok" variables that hold the bool return value of a type assertion.
+    # Default: false
+    ignore-type-assert-ok: true
+    # Ignore "ok" variables that hold the bool return value of a map index.
+    # Default: false
+    ignore-map-index-ok: true
+    # Ignore "ok" variables that hold the bool return value of a channel receive.
+    # Default: false
+    ignore-chan-recv-ok: true
+    # Optional list of variable names that should be ignored completely.
+    # Default: []
+    ignore-names:
+      - err
+    # Optional list of variable declarations that should be ignored completely.
+    # Entries must be in one of the following forms (see below for examples):
+    # - for variables, parameters, named return values, method receivers, or type parameters:
+    #   <name> <type>  (<type> can also be a pointer/slice/map/chan/...)
+    # - for constants: const <name>
+    #
+    # Default: []
+    ignore-decls:
+      - c echo.Context
+      - t testing.T
+      - f *foo.Bar
+      - e error
+      - i int
+      - const C
+      - T any
+      - m map[string]int
+
+  wsl:
+    # See https://github.com/bombsimon/wsl/blob/master/doc/configuration.md for documentation of available settings.
+    # These are the defaults for `golangci-lint`.
+
+    # Do strict checking when assigning from append (x = append(x, y)). If
+    # this is set to true - the append call must append either a variable
+    # assigned, called or used on the line above.
+    strict-append: true
+    # Allows assignments to be cuddled with variables used in calls on
+    # line above and calls to be cuddled with assignments of variables
+    # used in call on line above.
+    allow-assign-and-call: true
+    # Allows assignments to be cuddled with anything.
+    allow-assign-and-anything: false
+    # Allows cuddling to assignments even if they span over multiple lines.
+    allow-multiline-assign: true
+    # If the number of lines in a case block is equal to or lager than this
+    # number, the case *must* end white a newline.
+    force-case-trailing-whitespace: 2
+    # Allow blocks to end with comments.
+    allow-trailing-comment: true
+    # Allow multiple comments in the beginning of a block separated with newline.
+    allow-separated-leading-comment: true
+    # Allow multiple var/declaration statements to be cuddled.
+    allow-cuddle-declarations: true
+    # A list of call idents that everything can be cuddled with.
+    # Defaults to calls looking like locks.
+    allow-cuddle-with-calls: [ "Lock", "RLock" ]
+    # AllowCuddleWithRHS is a list of right hand side variables that is allowed
+    # to be cuddled with anything. Defaults to assignments or calls looking
+    # like unlocks.
+    allow-cuddle-with-rhs: [ "Unlock", "RUnlock" ]
+    # Causes an error when an If statement that checks an error variable doesn't
+    # cuddle with the assignment of that variable.
+    force-err-cuddling: true
+    # When force-err-cuddling is enabled this is a list of names
+    # used for error variables to check for in the conditional.
+    error-variable-names: [ "err" ]
+    # Causes an error if a short declaration (:=) cuddles with anything other than
+    # another short declaration.
+    # This logic overrides force-err-cuddling among others.
+    force-short-decl-cuddling: false
+
+  nolintlint:
+    # Disable to ensure that all nolint directives actually have an effect.
+    # Default: false
+    allow-unused: false
+    # Exclude following linters from requiring an explanation.
+    # Default: []
+    allow-no-explanation: [ ]
+    # Enable to require an explanation of nonzero length after each nolint directive.
+    # Default: false
+    require-explanation: true
+    # Enable to require nolint directives to mention the specific linter being suppressed.
+    # Default: false
+    require-specific: false
+
+  prealloc:
+    # IMPORTANT: we don't recommend using this linter before doing performance profiling.
+    # For most programs usage of prealloc will be a premature optimization.
+
+    # Report pre-allocation suggestions only on simple loops that have no returns/breaks/continues/gotos in them.
+    # Default: true
+    simple: false
+    # Report pre-allocation suggestions on range loops.
+    # Default: true
+    range-loops: false
+    # Report pre-allocation suggestions on for loops.
+    # Default: false
+    for-loops: false
+
+linters:
+  # Disable all linters.
+  # Default: false
+  disable-all: false
+  enable:
+    - gocognit
+    - funlen
+    - nilerr
+    - gosec
+    - goconst
+    - tagliatelle
+    - varnamelen
+    - wastedassign
+    - wsl
+    - nolintlint
+    - unused
+    # - prealloc
+    - dupl
+  # Enable all available linters.
+  # Default: false
+  enable-all: false
+  disable:
+    - depguard
+    - exhaustruct
+    - gci
+    - err113
+    - ireturn
+    - lll
+    - goimports
+    - wrapcheck
+    - gofumpt
+  # Enable presets.
+  # https://golangci-lint.run/usage/linters
+  # Default: []
+  presets:
+    - bugs
+    - comment
+    - complexity
+    - error
+    - format
+    - import
+    - metalinter
+    - module
+    - performance
+    - sql
+    - style
+    - test
+    - unused
+  # Enable only fast linters from enabled linters set (first run won't be fast)
+  # Default: false
+  fast: false
+
+severity:
+  # Set the default severity for issues.
+  #
+  # If severity rules are defined and the issues do not match or no severity is provided to the rule
+  # this will be the default severity applied.
+  # Severities should match the supported severity names of the selected out format.
+  # - Code climate: https://docs.codeclimate.com/docs/issues#issue-severity
+  # - Checkstyle: https://checkstyle.sourceforge.io/property_types.html#SeverityLevel
+  # - GitHub: https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
+  # - TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Inspection+Instance
+  #
+  # `@linter` can be used as severity value to keep the severity from linters (e.g. revive, gosec, ...)
+  #
+  # Default: ""
+  default-severity: error
+  # If set to true `severity-rules` regular expressions become case-sensitive.
+  # Default: false
+  case-sensitive: true
+  # When a list of severity rules are provided, severity information will be added to lint issues.
+  # Severity rules have the same filtering capability as exclude rules
+  # except you are allowed to specify one matcher per severity rule.
+  #
+  # `@linter` can be used as severity value to keep the severity from linters (e.g. revive, gosec, ...)
+  #
+  # Only affects out formats that support setting severity information.
+  #
+  # Default: []
+  rules:
+    - linters:
+        - dupl
+      severity: info

@@ -1,2 +1,2 @@
-DROP TABLE IF EXISTS users.accounts;
-DROP SCHEMA IF EXISTS users;
+drop table if exists users.accounts;
+drop schema if exists users;

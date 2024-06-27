@@ -5,35 +5,35 @@ package domain;
 option go_package = "dm/internal/domain";
 
 message User {
-  string id = 1;
-  string name = 2;
+	string id   = 1;
+	string name = 2;
 }
 
 message CreateUserRequest {
-  string name = 1;
+	string name = 1;
 }
 
 message CreateUserResponse {
-  string id = 1;
+	string id = 1;
 }
 
 message GetUserRequest {
-  string id = 1;
+	string id = 1;
 }
 
 message GetUserResponse {
-  User user = 1;
+	User user = 1;
 }
 
 message UpdateUserRequest {
-  string id = 1;
-  optional string name = 2;
+	string          id   = 1;
+	optional string name = 2;
 }
 
 message UpdateUserResponse {}
 
 message DeleteUserRequest {
-  string id = 1;
+	string id = 1;
 }
 
 message DeleteUserResponse {}
@@ -41,5 +41,5 @@ message DeleteUserResponse {}
 message ListUsersRequest {}
 
 message ListUsersResponse {
-  repeated User users = 1;
+	repeated User users = 1;
 }

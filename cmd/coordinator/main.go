@@ -2,22 +2,23 @@ package main
 
 import (
 	"context"
+	"log"
+
 	"dm/db"
+
+	"github.com/ilyakaznacheev/cleanenv"
+
 	"dm/internal/config"
 	"dm/internal/server"
 	"dm/internal/user/usercore"
 	"dm/internal/user/userservice"
 	"dm/internal/user/userstorage"
-	"log"
-
-	"github.com/ilyakaznacheev/cleanenv"
 )
 
 func main() {
 	var appConfig config.Config
 
-	err := cleanenv.ReadConfig("coordinator.toml", &appConfig)
-	if err != nil {
+	if err := cleanenv.ReadConfig("coordinator.toml", &appConfig); err != nil {
 		log.Fatalf("Error reading config file: %v", err)
 	}
 
@@ -26,8 +27,7 @@ func main() {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
-	err = db.Migrate(appConfig.Database)
-	if err != nil {
+	if err = db.Migrate(appConfig.Database); err != nil {
 		log.Fatalf("Error migrating database: %v", err)
 	}
 

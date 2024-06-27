@@ -1,6 +1,7 @@
-CREATE SCHEMA IF NOT EXISTS users AUTHORIZATION administrator;
+create schema if not exists users authorization administrator;
 
-CREATE TABLE IF NOT EXISTS users.accounts (
-    id SERIAL NOT NULL UNIQUE,
-    nickname TEXT NOT NULL UNIQUE
+create table if not exists users.accounts
+(
+    id       serial not null unique,
+    nickname text   not null unique
 )
