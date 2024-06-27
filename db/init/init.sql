@@ -1,3 +1,3 @@
-CREATE USER administrator WITH PASSWORD '12345678';
-CREATE DATABASE dm;
-GRANT ALL PRIVILEGES ON DATABASE dm to administrator;
+create user administrator with password '12345678';
+create database dm;
+grant all privileges on database dm to administrator;

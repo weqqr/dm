@@ -21,3 +21,13 @@ rpc: proto
 domain: proto/domain
 	mkdir -p internal/domain
 	$(PROTOC) --proto_path=proto/ --go_out=internal --go_opt=paths=source_relative  proto/domain/*.proto
+
+.PHONY: fmt
+fmt:
+	clang-format -i \
+	proto/*.proto \
+	proto/domain/*.proto
+
+.PHONY: lint
+lint:
+	golangci-lint run -c .golangci.yaml --fix=false --color=always
