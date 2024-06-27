@@ -68,7 +68,7 @@ func Migrate(config Config) error {
 		return err
 	}
 
-	if err = mig.Up(); err != nil {
+	if err = mig.Up(); err != nil && err != migrate.ErrNoChange {
 		return err
 	}
 
