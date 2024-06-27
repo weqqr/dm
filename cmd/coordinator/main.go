@@ -2,17 +2,15 @@ package main
 
 import (
 	"context"
-	"log"
-
 	"dm/db"
-
-	"github.com/ilyakaznacheev/cleanenv"
-
 	"dm/internal/config"
 	"dm/internal/server"
 	"dm/internal/user/usercore"
 	"dm/internal/user/userservice"
 	"dm/internal/user/userstorage"
+	"log"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 func main() {

@@ -8,6 +8,10 @@ all: coordinator
 coordinator: rpc domain
 	$(GO) build ./cmd/coordinator
 
+.PHONY: gateway
+gateway: rpc domain
+	$(GO) build ./cmd/gateway
+
 .PHONY: clean
 clean:
 	find . -name "*\.pb\.go" -type f | xargs rm

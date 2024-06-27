@@ -26,3 +26,9 @@ go.work.sum
 
 # protobuf and gRPC
 *.pb.go
+
+# toml files
+coordinator.toml
+
+# Lint file
+code-quality-report.json
