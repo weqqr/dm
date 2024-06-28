@@ -2,12 +2,12 @@ package config
 
 import (
 	"dm/db"
-	"dm/gateway"
 	"dm/internal/server"
+	"dm/internal/user/userproxy"
 )
 
 type Config struct {
-	Server   server.Config  `toml:"server"`
-	Database db.Config      `toml:"database"`
-	Gateway  gateway.Config `toml:"gateway"`
+	Server   server.Config    `toml:"server"`
+	Database db.Config        `toml:"database"`
+	Gateway  userproxy.Config `toml:"gateway"`
 }

@@ -11,12 +11,12 @@ COPY db /app/db
 COPY internal /app/internal
 COPY proto /app/proto
 
-RUN make coordinator
+RUN make gateway
 
 FROM scratch
 WORKDIR /app
 COPY db /app/db
 COPY internal /app/internal
-COPY --from=builder /app/coordinator /app/coordinator
-COPY coordinator.example.toml /app/coordinator.toml
-ENTRYPOINT ["/app/coordinator"]
+COPY --from=builder /app/gateway /app/gateway
+COPY gateway.example.toml /app/gateway.toml
+ENTRYPOINT ["/app/gateway"]

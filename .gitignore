@@ -26,3 +26,6 @@ go.work.sum
 
 # protobuf and gRPC
 *.pb.go
+
+# toml files
+coordinator.toml

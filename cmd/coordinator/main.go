@@ -2,18 +2,15 @@ package main
 
 import (
 	"context"
-	"log"
-
 	"dm/db"
-
-	"github.com/ilyakaznacheev/cleanenv"
-
-	"dm/gateway"
 	"dm/internal/config"
 	"dm/internal/server"
 	"dm/internal/user/usercore"
 	"dm/internal/user/userservice"
 	"dm/internal/user/userstorage"
+	"log"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 func main() {
@@ -36,14 +33,7 @@ func main() {
 
 	webServer.AddService(userservice.New(usercore.New(userstorage.New(database))))
 
-	go func() {
-		if err = webServer.Run(context.Background()); err != nil {
-			log.Fatalf("Error running web server: %v", err)
-		}
-	}()
-
-	var r gateway.Router
-	if err := r.Run(appConfig.Gateway); err != nil {
-		log.Fatalf("Error launching Gateway: %v", err)
+	if err = webServer.Run(context.Background()); err != nil {
+		log.Fatalf("Error running web server: %v", err)
 	}
 }
