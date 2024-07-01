@@ -8,33 +8,38 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func test(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"hello": "world"})
+type nameRequestBody struct {
+	Name string `json:"name"`
 }
 
 func (g *Gateway) create(c *gin.Context) {
-	name := c.Param("name")
+	var requestBody nameRequestBody
 
-	response, err := g.client.CreateUser(g.ctx, &domain.CreateUserRequest{
-		Name: name,
-	})
-
-	if err != nil {
-		log.Printf("GATEWAY | USER | CREATE | Error: %v", err)
+	if err := c.BindJSON(&requestBody); err != nil {
+		log.Printf("Error: %v", err)
 		return
 	}
 
-	if len(name) == 0 {
-		log.Print("GATEWAY | USER | CREATE | Warning: Can't create, because name is empty")
+	if len(requestBody.Name) == 0 {
+		log.Print("Error: Field name is empty")
 		c.JSON(http.StatusOK, gin.H{
-			"message": "Warning: Can't create, because name is empty",
+			"message": "Error: Field name is empty",
 		})
+		return
+	}
+
+	response, err := g.client.CreateUser(g.ctx, &domain.CreateUserRequest{
+		Name: requestBody.Name,
+	})
+
+	if err != nil {
+		log.Printf("Error: %v", err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"id":      response.Id,
-		"name":    name,
+		"name":    requestBody.Name,
 		"message": "Successful created user.",
 	})
 }
@@ -42,20 +47,20 @@ func (g *Gateway) create(c *gin.Context) {
 func (g *Gateway) get(c *gin.Context) {
 	id := c.Param("id")
 
+	if len(id) == 0 {
+		log.Print("Error: Field id is empty")
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Error: Field id is empty",
+		})
+		return
+	}
+
 	response, err := g.client.GetUser(g.ctx, &domain.GetUserRequest{
 		Id: id,
 	})
 
 	if err != nil {
-		log.Printf("GATEWAY | USER | GET | Error: %v", err)
-		return
-	}
-
-	if len(id) == 0 {
-		log.Print("GATEWAY | USER | GET | Error: Field id is empty")
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Error: Field id is empty",
-		})
+		log.Printf("Error: %v", err)
 		return
 	}
 
@@ -66,58 +71,65 @@ func (g *Gateway) get(c *gin.Context) {
 	})
 }
 
-func (g *Gateway) change(c *gin.Context) {
-	id, name := c.Param("id"), c.Param("name")
+func (g *Gateway) update(c *gin.Context) {
+	var requestBody nameRequestBody
+	id := c.Param("id")
 
-	_, err := g.client.UpdateUser(g.ctx, &domain.UpdateUserRequest{
-		Id:   id,
-		Name: &name,
-	})
-
-	if err != nil {
-		log.Printf("GATEWAY | USER | GET | Error: %v", err)
+	if err := c.BindJSON(&requestBody); err != nil {
+		log.Printf("Error: %v", err)
 		return
 	}
 
 	if len(id) == 0 {
-		log.Print("GATEWAY | DELETE | Error: Field id is empty")
+		log.Print("Error: Field id is empty")
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Error: Field id is empty",
 		})
 		return
 	}
 
-	if len(name) == 0 {
-		log.Print("GATEWAY | USER | GET | Warning: Can't change, because name is empty")
+	if len(requestBody.Name) == 0 {
+		log.Print("name is empty")
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Warning: Can't change, because name is empty",
 		})
 		return
 	}
 
+	_, err := g.client.UpdateUser(g.ctx, &domain.UpdateUserRequest{
+		Id:   id,
+		Name: &requestBody.Name,
+	})
+
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"id":      id,
-		"name":    name,
+		"name":    requestBody.Name,
 		"message": "Successful update data user from database.",
 	})
 }
 
 func (g *Gateway) delete(c *gin.Context) {
 	id := c.Param("id")
+
+	if len(id) == 0 {
+		log.Print("Error: Field id is empty")
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Error: Field id is empty",
+		})
+		return
+	}
+
 	_, err := g.client.DeleteUser(g.ctx, &domain.DeleteUserRequest{
 		Id: id,
 	})
 
 	if err != nil {
-		log.Printf("GATEWAY | DELETE | Error: %v", err)
-		return
-	}
-
-	if len(id) == 0 {
-		log.Print("GATEWAY | DELETE | Error: Field id is empty")
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Error: Field id is empty",
-		})
+		log.Printf("Error: %v", err)
 		return
 	}
 

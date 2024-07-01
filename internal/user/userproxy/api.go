@@ -32,7 +32,7 @@ func (g *Gateway) Run(ctx context.Context, config Config) error {
 
 	g.client = rpc.NewUserClient(conn)
 
-	if err := g.Roots(); err != nil {
+	if err := g.Routes(); err != nil {
 		return err
 	}
 
