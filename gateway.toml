@@ -1,0 +1,5 @@
+[gateway]
+address = "[::]:81"
+
+[database]
+dsn = "postgresql://administrator@postgres:5432/dm?sslmode=disable"
