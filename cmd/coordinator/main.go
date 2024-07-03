@@ -4,6 +4,7 @@ import (
 	"context"
 	"dm/db"
 	"dm/internal/config"
+	"dm/internal/rabbitmq"
 	"dm/internal/server"
 	"dm/internal/user/usercore"
 	"dm/internal/user/userservice"
@@ -33,7 +34,18 @@ func main() {
 
 	webServer.AddService(userservice.New(usercore.New(userstorage.New(database))))
 
+	go func() {
+		if err = rabbitmq.Receive(appConfig.RabbitMQ); err != nil {
+			log.Fatalf("Error launging Consumer: %v", err)
+		}
+	}()
+
 	if err = webServer.Run(context.Background()); err != nil {
 		log.Fatalf("Error running web server: %v", err)
 	}
+
+	// if err = rabbitmq.Send(appConfig.RabbitMQ); err != nil {
+	// 	log.Fatalf("Error launching Publisher: %v", err)
+	// }
+
 }

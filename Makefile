@@ -12,6 +12,10 @@ coordinator: rpc domain
 gateway: rpc domain
 	$(GO) build ./cmd/gateway
 
+.PHONY: rabbitmq
+rabbitmq: rpc domain
+	$(GO) build ./cmd/rabbitmq
+
 .PHONY: clean
 clean:
 	find . -name "*\.pb\.go" -type f | xargs rm

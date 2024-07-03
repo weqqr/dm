@@ -3,3 +3,6 @@ address = "[::]:80"
 
 [database]
 dsn = "postgresql://administrator@postgres:5432/dm?sslmode=disable"
+
+[rabbitmq]
+address = "amqp://guest:guest@rabbitmq/"
