@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package domain;
+
+option go_package = "dm/internal/domain";
+
+  
+message StreamRequest {
+    string id = 1;
+}
+  
+message StreamResponse {
+    string result = 1;
+}

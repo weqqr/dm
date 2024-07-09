@@ -12,4 +12,5 @@ type Config struct {
 	Database db.Config       `toml:"database"`
 	Gateway  gateway.Config  `toml:"gateway"`
 	RabbitMQ rabbitmq.Config `toml:"rabbitmq"`
+	Receive  rabbitmq.Config `toml:"receive"`
 }

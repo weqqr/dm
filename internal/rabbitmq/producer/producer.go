@@ -1,13 +1,14 @@
-package rabbitmq
+package producer
 
 import (
+	"dm/internal/rabbitmq"
 	"log"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func Receive(config Config) error {
-	conn, err := amqp.Dial(config.Address)
+func Run(c rabbitmq.Config) error {
+	conn, err := amqp.Dial(c.Address)
 	if err != nil {
 		return err
 	}
@@ -20,12 +21,12 @@ func Receive(config Config) error {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
+		"jobs", // name
+		false,  // durable
+		false,  // delete when unused
+		false,  // exclusive
+		false,  // no-wait
+		nil,    // arguments
 	)
 
 	if err != nil {

@@ -1,0 +1,5 @@
+[server]
+address = "[::]:80"
+
+[rabbitmq]
+address = "amqp://guest:guest@rabbitmq/"

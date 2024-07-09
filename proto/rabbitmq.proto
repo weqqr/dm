@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package api;
+
+import "domain/rabbitmq.proto";
+
+option go_package = "dm/internal/rpc";
+
+service StreamService {
+    rpc FetchResponse (domain.StreamRequest) returns (stream domain.StreamResponse) {}
+}
